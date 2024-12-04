@@ -31,51 +31,61 @@ Before you begin, ensure you have the following installed:
 
 ### Backend Setup
 
-1. Navigate to backend directory:
+1. Navigate to the backend directory:
 
-```bash
-cd backend
-```
+   ```bash
+   cd backend
+   ```
 
-Restore packages:
+2. Restore packages:
 
-dotnet restore
+   ```bash
+   dotnet restore
+   ```
 
-Update appsettings.json with your database connection string.
-Apply migrations (if needed):
+3. Update `appsettings.json` with your database connection string.
 
-dotnet ef database update
+4. Apply migrations (if needed):
 
-Run the backend:
+   ```bash
+   dotnet ef database update
+   ```
 
-    dotnet run
+5. Run the backend:
+
+   ```bash
+   dotnet run
+   ```
 
 ### Frontend Setup
 
-Navigate to frontend directory:
+1. Navigate to the frontend directory:
 
-```bash
-cd frontend
-```
+   ```bash
+   cd frontend
+   ```
 
-Install dependencies:
+2. Install dependencies:
 
-npm install
+   ```bash
+   npm install
+   ```
 
-Start the frontend:
+3. Start the frontend:
 
-    ng serve
+   ```bash
+   ng serve
+   ```
 
-Access the app at http://localhost:4200 (frontend) and http://localhost:5000 (backend).
+Access the app at [http://localhost:4200](http://localhost:4200) (frontend) and [http://localhost:5000](http://localhost:5000) (backend).
 
 ## Project Structure
 
-/backend # .NET backend
-/frontend # Angular frontend
-.gitignore # Git ignore rules
-README.md # Documentation
+- `/backend` - .NET backend
+- `/frontend` - Angular frontend
+- `.gitignore` - Git ignore rules
+- `README.md` - Documentation
 
 ## Contact
 
-    Email: your-email@example.com
-    GitHub: yourusername
+Email: ChouaibMonsif123@gmail.com

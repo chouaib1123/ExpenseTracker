@@ -1,0 +1,114 @@
+# .NET Ignore Rules
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific folders
+.vscode/
+.idea/
+.vs/
+_ReSharper*/
+*.cache/
+*.ncrunchsolution/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Oo]ut/
+bin/
+obj/
+app/bin/
+app/obj/
+
+# Log, local database, and test results
+*.log
+*.tlog
+*.pdb
+*.mdb
+*.ilk
+*.idb
+*.opendb
+*.scc
+*.aps
+*.ncb
+*.cache
+*.opensdf
+*.sdf
+*.sqlite
+*.sqlproj.user
+TestResults/
+*.coverage
+*.coveragexml
+*.testsettings
+*.vsmdi
+*.logtestresults
+*.testcoverage
+CoverageResults/
+
+# Microsoft Azure Web Apps
+.localhistory/
+.publish/
+*.Publish.xml
+
+# Mono auto generated files
+mono_crash.*
+
+# Generated files
+*.g.cs
+*.g.i.cs
+*.generated.cs
+*.dll.config
+
+# IDE files
+*.vsix
+*.appxsym
+*.appxupload
+*.csproj.user
+
+# Angular Ignore Rules
+# Environment files
+src/environments/*.ts
+!src/environments/environment.prod.ts
+
+# Logs and temporary files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+node_modules/
+dist/
+tmp/
+temp/
+out-tsc/
+coverage/
+*.tgz
+
+# IDE and editor-specific
+.idea/
+.vscode/
+*.code-workspace
+
+# Compiled and bundled files
+*.js
+*.js.map
+*.d.ts
+
+# Angular CLI specific
+.angular/
+.angular/cache/
+.angular.json
+
+# Miscellaneous
+package-lock.json
+yarn.lock
+*.log
+*.bak
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+desktop.ini

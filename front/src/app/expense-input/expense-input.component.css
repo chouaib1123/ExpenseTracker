@@ -1,0 +1,21 @@
+.ExpenseAdd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  form {
+    display: flex;
+    gap: 0.5rem;
+    button {
+      padding: 7px 20px;
+    }
+    input[type="number"],
+    select {
+      padding: 7px 10px;
+      border-radius: 5px;
+      border: 1px solid #0000001f;
+    }
+  }
+  margin-bottom: 3rem;
+}

@@ -1,0 +1,42 @@
+<div class="Register">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="username">Username</label>
+      <input id="username" formControlName="username" type="text" />
+      <div
+        *ngIf="
+          registerForm.get('username')?.invalid &&
+          registerForm.get('username')?.touched
+        "
+      >
+        Username is required
+      </div>
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input id="password" formControlName="password" type="password" />
+      <div
+        *ngIf="
+          registerForm.get('password')?.invalid &&
+          registerForm.get('password')?.touched
+        "
+      >
+        Password is required and must be at least 6 characters long
+      </div>
+    </div>
+    <div>
+      <label for="Cpassword">Confirm Password</label>
+      <input id="Cpassword" formControlName="Cpassword" type="password" />
+      <div
+        *ngIf="
+          registerForm.errors?.['mismatch'] &&
+          registerForm.get('Cpassword')?.touched
+        "
+      >
+        Passwords must match
+      </div>
+    </div>
+    <a routerLink="/auth/login">Do you have an account? Login now!</a>
+    <button type="submit" [disabled]="registerForm.invalid">Submit</button>
+  </form>
+</div>

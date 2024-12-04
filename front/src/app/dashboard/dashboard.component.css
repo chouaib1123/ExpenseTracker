@@ -1,0 +1,19 @@
+.main {
+  display: grid;
+
+  grid-template-columns: 1fr auto;
+  gap: 3rem;
+  margin-top: 50px;
+
+  color: white;
+  .expenses {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    min-height: 80vh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+  }
+}

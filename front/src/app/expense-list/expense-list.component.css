@@ -1,0 +1,14 @@
+.ExpenseList {
+  ul {
+    li {
+      list-style: none;
+      margin: 20px;
+      opacity: 0.8;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      button {
+        padding: 7px 20px;
+      }
+    }
+  }
+}

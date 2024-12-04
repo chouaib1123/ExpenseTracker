@@ -1,0 +1,36 @@
+.expenseBudget {
+  display: grid;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  h2 {
+    margin-bottom: 3rem;
+  }
+  p,
+  h3 {
+    display: flex;
+    justify-content: space-between;
+    strong {
+      opacity: 0.7;
+    }
+    span {
+      font-weight: bold;
+    }
+  }
+
+  form {
+    display: flex;
+    gap: 1rem;
+    button,
+    input {
+      padding: 7px 20px;
+    }
+  }
+  .EXCED {
+    margin: 0 auto;
+    color: red;
+  }
+}

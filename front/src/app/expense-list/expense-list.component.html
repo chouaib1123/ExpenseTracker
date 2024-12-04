@@ -1,0 +1,14 @@
+<div class="ExpenseList">
+  <h2>Expense List</h2>
+  <ul>
+    <li>
+      <strong>Amount</strong><strong>Category</strong><strong>Date</strong
+      ><strong></strong>
+    </li>
+    <li *ngFor="let expense of expenses">
+      <span>{{ expense.amount }}</span> <span>{{ expense.category }}</span>
+      <span>{{ expense.date }}</span>
+      <button (click)="deleteExpense(expense.id)">Delete</button>
+    </li>
+  </ul>
+</div>

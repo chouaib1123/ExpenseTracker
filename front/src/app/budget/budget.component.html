@@ -1,0 +1,22 @@
+<div class="expenseBudget">
+  <h3 *ngIf="Budget !== null">
+    <strong>Budget</strong> <span>{{ Budget }}</span>
+  </h3>
+  <p *ngIf="CurrentAmount !== null">
+    <strong>Total Current Expenses </strong><span>{{ CurrentAmount }}</span>
+  </p>
+
+  <form (ngSubmit)="onSubmit()">
+    <input
+      type="number"
+      id="newBudget"
+      [(ngModel)]="newBudget"
+      name="newBudget"
+      required
+      placeholder="Change Your Budget"
+    />
+    <button type="submit">Change</button>
+  </form>
+
+  <p class="EXCED" *ngIf="message">{{ message }}</p>
+</div>

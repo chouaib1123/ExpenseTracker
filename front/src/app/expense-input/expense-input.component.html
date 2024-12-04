@@ -1,0 +1,32 @@
+<div class="ExpenseAdd">
+  <h3>Add New Expense</h3>
+  <form (ngSubmit)="onSubmit()">
+    <input
+      type="number"
+      id="amount"
+      [(ngModel)]="expenseAmount"
+      name="amount"
+      placeholder="Amount"
+      required
+    />
+
+    <select
+      id="category"
+      [(ngModel)]="expenseCategory"
+      name="category"
+      required
+    >
+      <option value="" disabled selected>Select a category</option>
+      <option *ngFor="let category of categories" [value]="category">
+        {{ category }}
+      </option>
+    </select>
+
+    <button
+      type="submit"
+      [disabled]="!expenseCategory || expenseCategory === ''"
+    >
+      Submit
+    </button>
+  </form>
+</div>

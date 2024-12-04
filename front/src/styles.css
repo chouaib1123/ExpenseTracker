@@ -1,0 +1,31 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Rubik", sans-serif;
+}
+
+.Container {
+  background: #141e30;
+  background: linear-gradient(to right, #243b55, #141e30);
+}
+
+.InnerContainer {
+  min-height: 100vh;
+  margin: auto 150px;
+  padding-top: 20px;
+}
+
+button {
+  cursor: pointer;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}

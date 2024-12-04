@@ -1,0 +1,38 @@
+.Register {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  form {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 50px 80px;
+    border-radius: 10px;
+    display: grid;
+
+    gap: 2rem;
+    div {
+      display: grid;
+      gap: 0.5rem;
+      text-align: center;
+      font-size: 1.4rem;
+      color: rgba(255, 255, 255, 0.685);
+      input {
+        background-color: transparent;
+        border: 1px solid grey;
+        padding: 0.5rem 10px;
+        border-radius: 5px;
+      }
+    }
+    button {
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+  }
+  a {
+    color: rgba(240, 255, 255, 0.568);
+    text-decoration: none;
+  }
+}

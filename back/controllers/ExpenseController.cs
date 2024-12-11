@@ -11,9 +11,9 @@ namespace MyFirstApi.Controllers
     public class ExpenseController : ControllerBase
     {
         private readonly ApiDbContext _context;
-        private readonly AuthService _authService;
+        private readonly IAuthService _authService;
 
-        public ExpenseController(ApiDbContext context, AuthService authService)
+        public ExpenseController(ApiDbContext context, IAuthService authService)
         {
             _context = context;
             _authService = authService;
@@ -28,15 +28,15 @@ namespace MyFirstApi.Controllers
         }
 
         [HttpGet]
-        public  IActionResult  GetAllExpenses()
+        public async Task<ActionResult<IEnumerable<ExpenseDTO>>> Get()
         {
             try
             {
-                var username =  _authService.ValidateTokenFromRequest(Request);
+                var username = await _authService.ValidateTokenFromRequest(Request);
                 if (username == null)
                     return Unauthorized(new { message = "Invalid token" });
 
-                var expenses =  _context.Expenses
+                var expenses = await _context.Expenses
                     .Where(e => e.User.username == username)
                     .Select(e => new ExpenseDTO
                     {
@@ -46,7 +46,7 @@ namespace MyFirstApi.Controllers
                         Category = e.Category
                     })
                     .OrderByDescending(e => e.Date)
-                    .ToList();
+                    .ToListAsync();
 
                 if (!expenses.Any())
                     return NotFound(new { message = "No expenses found" });
@@ -60,77 +60,86 @@ namespace MyFirstApi.Controllers
             }
         }
 
-
+                [HttpPost]
         [HttpPost]
-        public IActionResult CreateExpense([FromBody] ExpenseDTO expenseDto)
+    public async Task<IActionResult> Create([FromBody] ExpenseDTO expenseDto)
+    {
+        try
         {
-            try
+            var username = await _authService.ValidateTokenFromRequest(Request);
+            if (username == null)
+                return Unauthorized(new { message = "Invalid token" });
+
+            var user = await _context.Users
+                .Include(u => u.Budget)
+                .FirstOrDefaultAsync(u => u.username == username);
+
+            if (user == null)
+                return NotFound(new { message = "User not found" });
+            
+            if (user.Budget == null)
+                return NotFound(new { message = "Budget not found" });
+
+            var expense = new Expenses
             {
-                var username = _authService.ValidateTokenFromRequest(Request);
-                if (username == null)
-                    return Unauthorized(new { message = "Invalid token" });
+                Amount = expenseDto.Amount,
+                Date = expenseDto.Date,
+                Category = expenseDto.Category,
+                UserId = user.Id
+            };
 
-                var user =  _context.Users
-                    .Include(u => u.Budget)
-                    .FirstOrDefault(u => u.username == username);
+            var oldAmount = user.Budget.CurrentAmount;
+            user.Budget.CurrentAmount += expense.Amount;
+            _context.Entry(user.Budget).State = EntityState.Modified;
 
-                if (user == null)
-                    return NotFound(new { message = "User not found" });
-                
-                if (user.Budget == null)
-                    return NotFound(new { message = "Budget not found" });
+            Console.WriteLine($"New budget after update: {user.Budget.CurrentAmount}");
 
-                var expense = new Expenses
-                {
-                    Amount = expenseDto.Amount,
-                    Date = expenseDto.Date,
-                    Category = expenseDto.Category,
-                    UserId = user.Id
-                };
-                user.Budget.CurrentAmount += expense.Amount;
+            await _context.Expenses.AddAsync(expense);
+            await _context.SaveChangesAsync();
 
-                _context.Expenses.Add(expense);
-                _context.SaveChanges();
-
-                return Ok(new { 
-                    message = "Expense added successfully",
-                    newBudget = user.Budget.CurrentAmount,
-                    expense.Id,
-                    expense.Amount,
-                    expense.Date,
-                    expense.Category
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error creating expense: {ex.Message}");
-                return StatusCode(500, new { message = "Internal server error" });
-            }
+            return Ok(new { 
+                message = "Expense added successfully",
+                oldBudget = oldAmount,
+                newBudget = user.Budget.CurrentAmount,
+                expense.Id,
+                expense.Amount,
+                expense.Date,
+                expense.Category
+            });
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating expense: {ex.Message}");
+            return StatusCode(500, new { message = "Internal server error" });
+        }
+    }
 
         [HttpDelete("{id}")]
-        public  IActionResult DeleteExpense(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var username = _authService.ValidateTokenFromRequest(Request);
+                var username = await _authService.ValidateTokenFromRequest(Request);
                 if (username == null)
                     return Unauthorized(new { message = "Invalid token" });
 
-                var expense =  _context.Expenses
+                var expense = await _context.Expenses
                     .Include(e => e.User)
                     .Include(e => e.User.Budget)
-                    .FirstOrDefault(e => e.Id == id && e.User.username == username);
+                    .FirstOrDefaultAsync(e => e.Id == id && e.User.username == username);
 
                 if (expense == null)
-                    return NotFound(new { message = "Expense not found" });    
+                    return NotFound(new { message = "Expense not found" });
 
-                var user = _context.Users.FirstOrDefault(e => e.username == username);
-
-                user.Budget.MaxAmount -= expense.Amount;
+                if (expense.User.Budget != null)
+                {
+                    expense.User.Budget.CurrentAmount -= expense.Amount;
+                    _context.Entry(expense.User.Budget).State = EntityState.Modified;
+                }
+                _context.Entry(expense.User.Budget).State = EntityState.Modified;
 
                 _context.Expenses.Remove(expense);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
                 return Ok(new { message = "Expense deleted successfully" });
             }

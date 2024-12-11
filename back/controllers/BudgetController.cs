@@ -13,9 +13,9 @@ namespace MyFirstApi.Controllers
     public class BudgetController : ControllerBase
     {
         private readonly ApiDbContext _context;
-        private readonly AuthService _authService;
+        private readonly IAuthService _authService;
 
-        public BudgetController(ApiDbContext context, AuthService authService)
+        public BudgetController(ApiDbContext context, IAuthService authService)
         {
             _context = context;
             _authService = authService;
@@ -26,33 +26,28 @@ namespace MyFirstApi.Controllers
             public decimal CurrentAmount { get; set; }
             public decimal Budget { get; set; }
         }
-
-
         [HttpGet]
-        public IActionResult GetBudget()
+        public async Task<ActionResult<BudgetDTO>> Get()
         {
             try
             {
-                var username = _authService.ValidateTokenFromRequest(Request);
+                var username = await _authService.ValidateTokenFromRequest(Request);
                 if (username == null)
                     return Unauthorized(new { message = "Invalid token" });
 
-                var user = _context.Users.FirstOrDefault(u => u.username == username);
-                
-                if (user == null)
-                    return NotFound(new { message = "User not found" });
+                var user = await _context.Users
+                    .Include(u => u.Budget)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.username == username);
 
-                var Budget = _context.Budget.FirstOrDefault(b => b.UserId == user.Id);    
+                if (user?.Budget == null)
+                    return NotFound(new { message = "Budget not found" });
 
-                if (Budget == null)
-                    return NotFound(new { message = "Budget not found for the user" });
-
-                return Ok(
-                    new BudgetDTO
-                    {
-                        CurrentAmount = Budget.CurrentAmount,
-                        Budget = Budget.MaxAmount
-                    });
+                return Ok(new BudgetDTO
+                {
+                    CurrentAmount = user.Budget.CurrentAmount,
+                    Budget = user.Budget.MaxAmount
+                });
             }
             catch (Exception ex)
             {
@@ -62,31 +57,34 @@ namespace MyFirstApi.Controllers
         }
 
 
-
         [HttpPost]
-        public IActionResult UpdateMaxBudget([FromBody] decimal maxAmount)
+        public async Task<IActionResult> UpdateMaxBudget([FromBody] decimal maxAmount)
         {
             try
             {
-                var username = _authService.ValidateTokenFromRequest(Request);
+                var username = await _authService.ValidateTokenFromRequest(Request);
                 if (username == null)
                     return Unauthorized(new { message = "Invalid token" });
 
-                var user = _context.Users
+                var user = await _context.Users
                     .Include(u => u.Budget)
-                    .FirstOrDefault(u => u.username == username);
+                    .FirstOrDefaultAsync(u => u.username == username);
 
                 if (user == null)
                     return NotFound(new { message = "User not found" });
                 
                 if (user.Budget == null)
                     return NotFound(new { message = "Budget not found" });
+
+                var oldMax = user.Budget.MaxAmount;
                 user.Budget.MaxAmount = maxAmount;
-             
-                _context.SaveChangesAsync();
+                _context.Entry(user.Budget).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
 
                 return Ok(new { 
                     message = "Budget updated successfully",
+                    oldMax = oldMax,
                     newMax = user.Budget.MaxAmount
                 });
             }

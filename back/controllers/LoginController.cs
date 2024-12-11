@@ -12,9 +12,9 @@ namespace MyFirstApi.Controllers
     public class LoginController : ControllerBase 
     {
         private readonly ApiDbContext _context;
-        private readonly AuthService _authService;
+        private readonly IAuthService _authService;
 
-        public LoginController(ApiDbContext context, AuthService authService)
+        public LoginController(ApiDbContext context, IAuthService authService)
         {
             _context = context;
             _authService = authService;
@@ -43,6 +43,40 @@ namespace MyFirstApi.Controllers
             return Ok(new { message = "Login successful" });
         }
 
+        [HttpGet("decode")]
+        public IActionResult DecodeToken([FromQuery] string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest(new { message = "Token is required" });
+            }
+
+            try
+            {
+                byte[] tokenBytes = Convert.FromBase64String(token);
+                string tokenData = Encoding.UTF8.GetString(tokenBytes);
+                string[] parts = tokenData.Split(':');
+                
+                if (parts.Length != 3)
+                {
+                    return BadRequest(new { message = "Invalid token format" });
+                }
+
+                string username = parts[0];
+                long timestamp = long.Parse(parts[1]);
+                
+                if (new DateTime(timestamp) < DateTime.UtcNow.AddHours(-1))
+                {
+                    return Unauthorized(new { message = "Token expired" });
+                }
+
+                return Ok(new { username = username });
+            }
+            catch
+            {
+                return BadRequest(new { message = "Invalid token format" });
+            }
+        }
 
         [HttpGet("check-auth")]
         public IActionResult CheckAuth()

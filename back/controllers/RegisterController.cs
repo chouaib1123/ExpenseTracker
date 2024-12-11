@@ -18,7 +18,9 @@ namespace MyFirstApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Users user)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Post([FromBody] Users user)
         {
             try
             {
@@ -45,8 +47,8 @@ namespace MyFirstApi.Controllers
                     MaxAmount = 1000, 
                 };
                 user.Budget = defaultBudget;
-                _context.Users.Add(user);
-                _context.SaveChanges();
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
 
                 return Ok(new { message = "Registration successful" });
             }

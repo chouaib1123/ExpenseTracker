@@ -1,9 +1,15 @@
 using System.Text;
 
 namespace MyFirstApi.Services
-{ 
+{
+    public interface IAuthService
+    {
+        string GenerateToken(string username);
+        string? GetUsernameFromToken(string token);
+        Task<string?> ValidateTokenFromRequest(HttpRequest request);
+    }
 
-    public class AuthService 
+    public class AuthService : IAuthService
     {
         private const string SECRET_KEY = "ffiptXLrFAGMspu8M5s2Snh6ZOWqMe54";
 
@@ -24,9 +30,8 @@ namespace MyFirstApi.Services
                 if (parts.Length != 3) return null;
 
                 var timestamp = long.Parse(parts[1]);
-                if (new DateTime(timestamp) < DateTime.UtcNow.AddHours(-1) || parts[2] != "ffiptXLrFAGMspu8M5s2Snh6ZOWqMe54")
+                if (new DateTime(timestamp) < DateTime.UtcNow.AddHours(-1))
                     return null;
-                    
 
                 return parts[0];
             }
@@ -36,7 +41,7 @@ namespace MyFirstApi.Services
             }
         }
 
-        public  string? ValidateTokenFromRequest(HttpRequest request)
+        public async Task<string?> ValidateTokenFromRequest(HttpRequest request)
         {
             var token = request.Cookies["authToken"];
             if (string.IsNullOrEmpty(token))
